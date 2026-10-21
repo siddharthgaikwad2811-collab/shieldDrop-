@@ -1,136 +1,278 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ShieldDrop Desktop</title>
-  <!-- Bootstrap Icons CDN for exact system icons -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-  <!-- Link to the stylesheet configured in Step 1 -->
-  <link rel="stylesheet" href="css/style.css">
-  <!-- Eel runtime connection -->
-  <script type="text/javascript" src="/eel.js"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ShieldDrop — Secure AES-256 Vault</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
 </head>
 <body>
 
-  <div class="app-container">
-    <!-- ================= 1. SIDEBAR NAVIGATION ================= -->
-    <aside class="sidebar">
-      <div>
-        <div class="brand-header">
-          <i class="bi bi-shield-check brand-icon"></i>
-          <span>ShieldDrop</span>
-        </div>
-
-        <nav class="nav-group">
-          <a href="#" class="nav-link-btn active">
-            <i class="bi bi-upload"></i> Drop & Share
-          </a>
-          <a href="#" class="nav-link-btn">
-            <i class="bi bi-folder2-open"></i> Secure Vault
-          </a>
-          <a href="#" class="nav-link-btn">
-            <i class="bi bi-arrow-left-right"></i> Transfer Activity
-          </a>
-          <a href="#" class="nav-link-btn">
-            <i class="bi bi-gear"></i> Settings
-          </a>
-        </nav>
-      </div>
-
-      <!-- Live Security Engine Badge -->
-      <div class="security-status-card">
-        <div class="status-header">
-          <span class="status-title">Security Status</span>
-          <span class="status-badge-icon"><i class="bi bi-check"></i></span>
-        </div>
-        <p class="status-detail">
-          Hardware Crypto Active - AES-256-GCM + SHA-256 verified
-        </p>
-      </div>
-    </aside>
-
-    <!-- ================= 2. WORKSPACE CANVAS ================= -->
-    <main class="workspace">
-      <!-- Topbar Header -->
-      <header class="topbar">
-        <div class="breadcrumbs">
-          Workspace / <span>Quick Transfer</span>
-        </div>
-
-        <div class="topbar-actions">
-          <div class="e2e-pill">
-            <i class="bi bi-lock-fill"></i> E2EE Enforced
-          </div>
-          <i class="bi bi-chat-left-text" style="color: var(--text-secondary); cursor: pointer;"></i>
-          <i class="bi bi-bell" style="color: var(--text-secondary); cursor: pointer;"></i>
-          <div class="avatar-badge">SG</div>
-        </div>
-      </header>
-
-      <!-- Central Dropzone Deck -->
-      <section class="dropzone-deck" id="dropZone">
-        <i class="bi bi-cloud-arrow-up drop-icon-cloud"></i>
-        <div class="deck-tag">Shield Dropzone</div>
-        <h2 class="deck-title">Drag files here to encrypt & share</h2>
-        <p class="deck-sub">
-          Drag files here to encrypt & share in seconds, with zero-knowledge AES-256 isolation and tamper-proof checksum verification.
-        </p>
-
-        <div style="display: flex; justify-content: center; gap: 12px; margin-bottom: 14px;">
-          <input type="text" id="selectedFilePath" placeholder="No file selected..." readonly 
-            style="background: #0f141f; border: 1px solid var(--border-subtle); color: var(--text-primary); border-radius: 8px; padding: 10px 14px; width: 340px; font-size: 0.85rem; outline: none;">
-          <button class="btn-select-files" onclick="browseLocalFile()">Select Local Files</button>
-        </div>
-
-        <div style="display: flex; justify-content: center; gap: 10px;">
-          <input type="password" id="vaultPasswordInput" placeholder="Set Decryption Passphrase" 
-            style="background: #0f141f; border: 1px solid var(--border-subtle); color: var(--text-primary); border-radius: 8px; padding: 8px 14px; width: 240px; font-size: 0.85rem; outline: none;">
-          <button class="btn-select-files" style="background-color: #0066ff; color: #fff;" onclick="triggerEncryption()">Encrypt</button>
-        </div>
-        <div id="statusMessage" style="margin-top: 12px; font-size: 0.82rem;"></div>
-      </section>
-
-      <!-- Active Secure Links / Encrypted Assets -->
-      <section class="vault-panel">
-        <h3 class="panel-heading">Active Secure Links</h3>
-        <table class="data-table">
-          <thead>
-            <tr>
-              <th>File</th>
-              <th>Size</th>
-              <th>SHA-256</th>
-              <th>Status</th>
-              <th style="text-align: right;">Actions</th>
-            </tr>
-          </thead>
-          <tbody id="vaultTableBody">
-            <!-- Sample demonstration row matching your screenshot -->
-            <tr>
-              <td>
-                <div class="file-cell">
-                  <i class="bi bi-file-earmark-pdf-fill file-icon-pdf"></i>
-                  <span>Financial_Audit_2026.pdf</span>
-                </div>
-              </td>
-              <td>4.8 MB</td>
-              <td class="hash-cell">e3b0c44...89b</td>
-              <td><span class="badge-expiry">Expires in 4h</span></td>
-              <td style="text-align: right;">
-                <button class="table-action-btn" onclick="navigator.clipboard.writeText('shield://vault/e3b0c44'); alert('Encrypted share link copied!')">
-                  <i class="bi bi-copy"></i> Copy Link
-                </button>
-                <button class="table-action-btn" style="color: #ef4444; border-color: rgba(239, 68, 68, 0.3);">
-                  <i class="bi bi-trash"></i>
-                </button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </section>
-    </main>
+  <!-- TOAST NOTIFICATION -->
+  <div id="toastNotification" class="toast-card" style="display: none;">
+    <span id="toastIcon">🛡️</span>
+    <span id="toastMessage">Action completed successfully</span>
   </div>
 
-  <script src="js/vault.js"></script>
+  <!-- SCREEN 1: LOGIN PAGE -->
+  <div id="screen-login" class="fullscreen-view">
+    <div class="auth-box">
+      <div class="auth-header">
+        <span class="auth-tag">Access Gateway</span>
+        <h2>ShieldDrop Access</h2>
+        <p>Register your session identity to begin verification.</p>
+      </div>
+
+      <div class="form-group">
+        <label>Full Name</label>
+        <input type="text" id="inputName" placeholder="e.g. Siddharth Gaikwad" autocomplete="off" />
+      </div>
+
+      <div class="form-group">
+        <label>Email Address</label>
+        <input type="email" id="inputEmail" placeholder="siddharth@example.com" autocomplete="off" />
+      </div>
+
+      <div class="form-group">
+        <label>Phone Number</label>
+        <input type="tel" id="inputPhone" placeholder="+91 98765 43210" autocomplete="off" />
+      </div>
+
+      <div class="form-group">
+        <label>Vault Quick PIN</label>
+        <div class="input-with-action">
+          <input type="password" id="inputPin" placeholder="4-digit PIN" maxlength="6" autocomplete="off" />
+          <button type="button" id="togglePinBtn" class="btn-toggle-eye">👁️</button>
+        </div>
+      </div>
+
+      <button type="button" id="btnProceedLogin" class="btn-primary">Proceed to 2FA Verification →</button>
+    </div>
+  </div>
+
+  <!-- SCREEN 2: 2FA OTP VERIFICATION -->
+  <div id="screen-2fa" class="fullscreen-view" style="display: none;">
+    <div class="auth-box">
+      <div class="auth-header">
+        <span class="auth-tag">Two-Factor Authentication</span>
+        <h2>Enter Verification Code</h2>
+        <p id="otpPromptText">A 6-digit verification code has been dispatched to your device.</p>
+      </div>
+
+      <div class="form-group">
+        <label>Enter 6-Digit Code</label>
+        <input type="text" id="inputOtp" class="otp-input" placeholder="000000" maxlength="6" autocomplete="off" />
+      </div>
+
+      <button type="button" id="btnVerifyOtp" class="btn-primary">Verify & Enter Vault</button>
+      <button type="button" id="btnBackLogin" class="btn-secondary">← Back to Details</button>
+    </div>
+  </div>
+
+  <!-- SCREEN 3: HOME WORKSPACE -->
+  <div id="screen-home" class="app-container" style="display: none;">
+    
+    <header class="navbar">
+      <div class="brand">
+        <span class="brand-shield">🛡️</span>
+        <div>
+          <h3>ShieldDrop</h3>
+          <small>AES-256 Vault Architecture</small>
+        </div>
+      </div>
+      <div class="user-status">
+        <span class="online-dot"></span>
+        <span id="navUserName">Siddharth Gaikwad</span>
+        <button type="button" id="btnLockVault" class="btn-lock">Lock Vault</button>
+      </div>
+    </header>
+
+    <div class="workspace">
+      <aside class="sidebar">
+        <button type="button" class="nav-item active" data-page="page-encrypt">
+          <span>🔒</span> Encrypt File
+        </button>
+        <button type="button" class="nav-item" data-page="page-decrypt">
+          <span>🔓</span> Decrypt File
+        </button>
+        <button type="button" class="nav-item" data-page="page-records">
+          <span>📁</span> Vault Records
+        </button>
+        <button type="button" class="nav-item" data-page="page-settings">
+          <span>⚙️</span> System Settings
+        </button>
+      </aside>
+
+      <main class="page-content">
+
+        <!-- SUB-PAGE 1: ENCRYPT -->
+        <section id="page-encrypt" class="content-section">
+          <div class="page-title-row">
+            <div>
+              <h2>Encrypt New File</h2>
+              <p>Package target files into encrypted .enc vault containers with PBKDF2 key derivation.</p>
+            </div>
+            <span class="badge-status">Cipher Ready</span>
+          </div>
+
+          <div class="panel-box">
+            <div class="drop-zone" id="fileDropZone">
+              <span class="zone-icon">📥</span>
+              <p class="dropzone-text">Drag and drop file here, or click to browse</p>
+              <span class="dropzone-sub">Local desktop files only</span>
+              <input type="file" id="targetFileInput" style="display: none;" />
+            </div>
+
+            <div id="encryptMetaCard" class="meta-card" style="display: none;">
+              <div class="meta-info">
+                <span class="meta-icon">📄</span>
+                <div>
+                  <strong id="metaFileName">-</strong>
+                  <small id="metaFileSize">-</small>
+                </div>
+              </div>
+              <button type="button" id="btnClearEncryptFile" class="btn-clear-file">✕ Remove</button>
+            </div>
+
+            <div class="form-group" style="margin-top: 16px;">
+              <label>Passphrase / Master Secret</label>
+              <div class="input-with-action">
+                <input type="password" id="encryptPassphrase" placeholder="Passphrase for key derivation" />
+                <button type="button" id="toggleEncryptPassBtn" class="btn-toggle-eye">👁️</button>
+              </div>
+            </div>
+
+            <div id="encryptProgressContainer" class="progress-container" style="display: none;">
+              <div class="progress-bar-wrap">
+                <div id="encryptProgressBar" class="progress-bar-fill"></div>
+              </div>
+              <span id="encryptProgressLabel" class="progress-label">0%</span>
+            </div>
+
+            <button type="button" id="btnRunEncrypt" class="btn-primary" style="max-width: 260px;">
+              Execute AES-256 Encryption
+            </button>
+          </div>
+        </section>
+
+        <!-- SUB-PAGE 2: DECRYPT -->
+        <section id="page-decrypt" class="content-section" style="display: none;">
+          <div class="page-title-row">
+            <div>
+              <h2>Decrypt Vault File</h2>
+              <p>Extract encrypted `.enc` files back to their original plaintext state.</p>
+            </div>
+            <span class="badge-status">Decryption Standby</span>
+          </div>
+
+          <div class="panel-box">
+            <div class="form-group">
+              <label>Select Encrypted Container (.enc)</label>
+              <input type="file" id="decryptFileInput" accept=".enc" />
+            </div>
+
+            <div id="decryptMetaCard" class="meta-card" style="display: none;">
+              <div class="meta-info">
+                <span class="meta-icon">🔐</span>
+                <div>
+                  <strong id="decryptMetaFileName">-</strong>
+                  <small id="decryptMetaFileSize">-</small>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>Enter Master Passphrase</label>
+              <div class="input-with-action">
+                <input type="password" id="decryptPassphrase" placeholder="Passphrase used during encryption" />
+                <button type="button" id="toggleDecryptPassBtn" class="btn-toggle-eye">👁️</button>
+              </div>
+            </div>
+
+            <div id="decryptProgressContainer" class="progress-container" style="display: none;">
+              <div class="progress-bar-wrap">
+                <div id="decryptProgressBar" class="progress-bar-fill"></div>
+              </div>
+              <span id="decryptProgressLabel" class="progress-label">0%</span>
+            </div>
+
+            <button type="button" id="btnRunDecrypt" class="btn-primary" style="max-width: 260px;">
+              Verify Key & Decrypt
+            </button>
+          </div>
+        </section>
+
+        <!-- SUB-PAGE 3: RECORDS -->
+        <section id="page-records" class="content-section" style="display: none;">
+          <div class="page-title-row">
+            <div>
+              <h2>Vault Storage Records</h2>
+              <p>Persistent encrypted assets recorded in the local session database.</p>
+            </div>
+            <input type="text" id="recordSearchInput" class="search-box" placeholder="🔍 Search records..." />
+          </div>
+
+          <div class="table-card">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Original Name</th>
+                  <th>Encrypted Container</th>
+                  <th>File Size</th>
+                  <th>SHA-256 Hash</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="recordsTableBody"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- SUB-PAGE 4: SETTINGS -->
+        <section id="page-settings" class="content-section" style="display: none;">
+          <h2>Session & Security Settings</h2>
+          <p>Active environment parameters and cryptographic configuration.</p>
+
+          <div class="panel-box" style="max-width: 580px;">
+            <div class="info-row">
+              <strong>User Identity:</strong>
+              <span id="settingsUserDisplay">-</span>
+            </div>
+            <div class="info-row">
+              <strong>Email Identifier:</strong>
+              <span id="settingsEmailDisplay">-</span>
+            </div>
+            <div class="info-row">
+              <strong>Verification Phone:</strong>
+              <span id="settingsPhoneDisplay">-</span>
+            </div>
+            <div class="info-row">
+              <strong>Cipher Mode:</strong>
+              <span>AES-256-CBC (Hardware Accelerated)</span>
+            </div>
+            <div class="info-row">
+              <strong>Key Derivation:</strong>
+              <span>PBKDF2-HMAC-SHA256 (100,000 iterations)</span>
+            </div>
+          </div>
+        </section>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- Safe script loading for Eel or browser standalone preview -->
+  <script type="text/javascript">
+    // Graceful fallback if eel.js is not present when previewing standalone in browser
+    window.eel = window.eel || {
+      expose: function() {},
+      _init: function() {}
+    };
+  </script>
+  <script src="js/auth.js"></script>
 </body>
 </html>
