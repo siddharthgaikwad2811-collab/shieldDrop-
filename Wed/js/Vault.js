@@ -42,3 +42,106 @@ async function triggerEncryption() {
     statusMsg.style.color = "#ef4444";
   }
 }
+// Session cache for active authentication flow
+let pendingAuthData = {
+    name: "",
+    email: "",
+    phone: "",
+    pin: ""
+};
+
+/**
+ * Handles transition from Stage 1 (Credentials) to Stage 2 (2FA OTP)
+ */
+async function goToVerificationStage() {
+    const name = document.getElementById("authName").value.trim();
+    const email = document.getElementById("authEmail").value.trim();
+    const phone = document.getElementById("authPhone").value.trim();
+    const pin = document.getElementById("authPin").value.trim();
+
+    // Basic frontend field validation
+    if (!name || !email || !phone || !pin) {
+        alert("Please fill in all details (Name, Email, Phone, and PIN).");
+        return;
+    }
+
+    if (pin.length < 4) {
+        alert("PIN must be at least 4 digits.");
+        return;
+    }
+
+    // Cache locally for the session
+    pendingAuthData = { name, email, phone, pin };
+
+    try {
+        // Call Python Eel backend to validate PIN and request OTP
+        const response = await eel.initiate_login_bridge(email, pin)();
+
+        if (response.status === "success") {
+            // Flip view to Stage 2 (2FA Card)
+            document.getElementById("stageCredentials").style.display = "none";
+            document.getElementById("stageVerification").style.display = "block";
+            
+            // Focus on OTP input
+            const otpInput = document.getElementById("authOtp");
+            otpInput.value = "";
+            otpInput.focus();
+
+            // Development/Demo popup showing generated OTP
+            if (response.demo_otp) {
+                alert(`[2FA Simulation] Security OTP sent to ${phone || email}:\n\nCode: ${response.demo_otp}`);
+            }
+        } else {
+            alert(response.message || "Authentication failed. Invalid PIN.");
+        }
+    } catch (err) {
+        console.error("Eel bridge error:", err);
+        alert("Could not reach backend authentication service.");
+    }
+}
+
+/**
+ * Handles final OTP verification and unlocks the dashboard
+ */
+async function submitFinalAuth() {
+    const otp = document.getElementById("authOtp").value.trim();
+
+    if (otp.length !== 6) {
+        alert("Please enter a valid 6-digit verification code.");
+        return;
+    }
+
+    try {
+        // Send OTP verification to Python backend
+        const response = await eel.verify_2fa_bridge(pendingAuthData.email, otp)();
+
+        if (response.status === "success") {
+            // Hide the entire authentication backdrop
+            const overlay = document.getElementById("authOverlay");
+            if (overlay) {
+                overlay.style.display = "none";
+            }
+
+            // Update user profile badge in UI header if present
+            const profileName = document.querySelector(".user-name") || document.getElementById("profileName");
+            if (profileName) {
+                profileName.textContent = pendingAuthData.name;
+            }
+
+            alert("Identity verified! ShieldDrop vault is now unlocked.");
+        } else {
+            alert(response.message || "Invalid or expired verification code.");
+        }
+    } catch (err) {
+        console.error("Eel bridge error:", err);
+        alert("Verification request failed.");
+    }
+}
+
+/**
+ * Returns user back to credentials form if they need to edit inputs
+ */
+function backToCredentialsStage() {
+    document.getElementById("stageVerification").style.display = "none";
+    document.getElementById("stageCredentials").style.display = "block";
+}
