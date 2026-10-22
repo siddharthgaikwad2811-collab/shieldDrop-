@@ -42,6 +42,7 @@ async function triggerEncryption() {
     statusMsg.style.color = "#ef4444";
   }
 }
+
 // Session cache for active authentication flow
 let pendingAuthData = {
     name: "",
@@ -116,6 +117,9 @@ async function submitFinalAuth() {
         const response = await eel.verify_2fa_bridge(pendingAuthData.email, otp)();
 
         if (response.status === "success") {
+            // Store the login PIN in session storage so Lock & Login share the exact same key
+            sessionStorage.setItem("vault_pass", pendingAuthData.pin);
+
             // Hide the entire authentication backdrop
             const overlay = document.getElementById("authOverlay");
             if (overlay) {
@@ -144,4 +148,21 @@ async function submitFinalAuth() {
 function backToCredentialsStage() {
     document.getElementById("stageVerification").style.display = "none";
     document.getElementById("stageCredentials").style.display = "block";
+}
+
+/**
+ * Validates unlock password against the shared session storage PIN
+ */
+function verifyVaultUnlock() {
+    const savedPassword = sessionStorage.getItem("vault_pass");
+    const enteredPass = document.getElementById("unlockPasswordInput").value.trim();
+
+    if (enteredPass === savedPassword) {
+        alert("Vault unlocked successfully!");
+        // Hide the lock overlay/screen if present
+        const lockScreen = document.getElementById("lockOverlay");
+        if (lockScreen) lockScreen.style.display = "none";
+    } else {
+        alert("Incorrect password. Try again.");
+    }
 }
