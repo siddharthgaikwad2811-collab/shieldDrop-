@@ -151,17 +151,38 @@ function backToCredentialsStage() {
 }
 
 /**
- * Validates unlock password against the shared session storage PIN
+ * Bulletproof unlock verification for the lock screen
  */
 function verifyVaultUnlock() {
     const savedPassword = sessionStorage.getItem("vault_pass");
-    const enteredPass = document.getElementById("unlockPasswordInput").value.trim();
+    
+    // Check multiple common IDs in case your HTML uses a different ID for the lock input
+    const inputEl = document.getElementById("unlockPasswordInput") || 
+                    document.getElementById("inputPin") || 
+                    document.getElementById("lockPasswordInput");
+
+    if (!inputEl) {
+        alert("Error: Could not find the password input field on the lock screen.");
+        return;
+    }
+
+    const enteredPass = inputEl.value.trim();
 
     if (enteredPass === savedPassword) {
         alert("Vault unlocked successfully!");
-        // Hide the lock overlay/screen if present
-        const lockScreen = document.getElementById("lockOverlay");
-        if (lockScreen) lockScreen.style.display = "none";
+        
+        // Clear the lock input box
+        inputEl.value = "";
+
+        // Hide the lock overlay/screen
+        const lockScreen = document.getElementById("lockOverlay") || document.getElementById("screen-lock");
+        if (lockScreen) {
+            lockScreen.style.display = "none";
+        } else {
+            // Fallback: hide lock overlay and show dashboard
+            const overlay = document.getElementById("authOverlay");
+            if (overlay) overlay.style.display = "none";
+        }
     } else {
         alert("Incorrect password. Try again.");
     }
