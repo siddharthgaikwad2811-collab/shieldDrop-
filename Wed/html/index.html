@@ -17,8 +17,56 @@
     <span id="toastMessage">Action completed successfully</span>
   </div>
 
-  <!-- SCREEN 1: LOGIN PAGE -->
-  <div id="screen-login" class="fullscreen-view">
+  <!-- SCREEN 0: PUBLIC LANDING PAGE (Home, About Us, Contact Us) -->
+  <div id="screen-landing" class="fullscreen-view" style="display: flex; flex-direction: column; width: 100vw; height: 100vh; background: #0f172a; color: white;">
+    <!-- Navbar -->
+    <nav class="landing-navbar" style="display: flex; justify-content: space-between; align-items: center; padding: 20px 50px; background: #1e293b; border-bottom: 1px solid #334155;">
+      <div class="logo" style="font-size: 22px; font-weight: bold; display: flex; align-items: center; gap: 8px;">
+        <span>🛡️</span> ShieldDrop
+      </div>
+      <div class="nav-links" style="display: flex; gap: 30px;">
+        <a href="#home" style="color: #9ca3af; text-decoration: none; font-weight: 500;" onclick="showLandingTab('home', event)">Home</a>
+        <a href="#about" style="color: #9ca3af; text-decoration: none; font-weight: 500;" onclick="showLandingTab('about', event)">About Us</a>
+        <a href="#contact" style="color: #9ca3af; text-decoration: none; font-weight: 500;" onclick="showLandingTab('contact', event)">Contact Us</a>
+      </div>
+      <div>
+        <button type="button" onclick="goToAuthScreen()" class="btn-primary" style="padding: 10px 22px; font-size: 14px; border-radius: 6px; cursor: pointer;">Sign In / Register</button>
+      </div>
+    </nav>
+
+    <!-- Landing Content Area -->
+    <div class="landing-content" style="flex: 1; display: flex; justify-content: center; align-items: center; text-align: center; padding: 40px;">
+      
+      <!-- Home Tab -->
+      <div id="landing-home-tab" class="landing-tab" style="display: block; max-width: 700px;">
+        <span class="auth-tag" style="display: inline-block; margin-bottom: 15px; background: #312e81; color: #818cf8; padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 600;">Secure Local File Vault</span>
+        <h1 style="font-size: 44px; margin-bottom: 20px; font-weight: 700;">Military-Grade AES-256 File Protection</h1>
+        <p style="font-size: 16px; color: #9ca3af; line-height: 1.6; margin-bottom: 30px;">Protect your sensitive documents, financial records, and personal assets with zero-knowledge local encryption, SHA-256 hashing, and automated MySQL audit logs.</p>
+        <button type="button" onclick="goToAuthScreen()" class="btn-primary" style="padding: 14px 32px; font-size: 16px; border-radius: 8px; cursor: pointer;">Get Started Now →</button>
+      </div>
+
+      <!-- About Us Tab -->
+      <div id="landing-about-tab" class="landing-tab" style="display: none; max-width: 650px; text-align: left; background: #1e293b; padding: 40px; border-radius: 12px; border: 1px solid #334155;">
+        <h2 style="font-size: 28px; margin-bottom: 15px; color: #f8fafc;">About ShieldDrop</h2>
+        <p style="font-size: 15px; color: #9ca3af; line-height: 1.7; margin-bottom: 15px;">ShieldDrop is an advanced desktop security utility engineered for absolute data confidentiality at rest. Built using Python Eel, HTML5/Bootstrap, and MySQL, it ensures that your private files remain completely inaccessible to unauthorized parties.</p>
+        <p style="font-size: 15px; color: #9ca3af; line-height: 1.7;">By utilizing local PBKDF2 key derivation and AES-256 encryption, ShieldDrop eliminates reliance on vulnerable public cloud storage providers.</p>
+      </div>
+
+      <!-- Contact Us Tab -->
+      <div id="landing-contact-tab" class="landing-tab" style="display: none; max-width: 500px; background: #1e293b; padding: 40px; border-radius: 12px; border: 1px solid #334155; text-align: center;">
+        <h2 style="font-size: 28px; margin-bottom: 15px; color: #f8fafc;">Contact Support</h2>
+        <p style="font-size: 15px; color: #9ca3af; margin-bottom: 20px;">Have questions regarding your security vault or technical architecture? Reach out to our development team.</p>
+        <div style="background: #0f172a; padding: 14px; border-radius: 6px; border: 1px solid #334155; color: #818cf8; font-weight: 600;">
+          siddharthgaikwad2811@gmail.com
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+
+  <!-- SCREEN 1: LOGIN / REGISTRATION PAGE -->
+  <div id="screen-login" class="fullscreen-view" style="display: none;">
     <div class="auth-box">
       <div class="auth-header">
         <span class="auth-tag">Access Gateway</span>
@@ -50,6 +98,7 @@
       </div>
 
       <button type="button" id="btnProceedLogin" class="btn-primary">Proceed to 2FA Verification →</button>
+      <button type="button" onclick="backToLanding()" class="btn-secondary" style="margin-top: 10px;">← Back to Landing Page</button>
     </div>
   </div>
 
@@ -265,8 +314,27 @@
     </div>
   </div>
 
-  <!-- Safe script loading for Eel or browser standalone preview -->
+  <!-- Landing & Navigation Helper Scripts -->
   <script type="text/javascript">
+    function goToAuthScreen() {
+      document.getElementById("screen-landing").style.display = "none";
+      document.getElementById("screen-login").style.display = "flex";
+    }
+
+    function backToLanding() {
+      document.getElementById("screen-login").style.display = "none";
+      document.getElementById("screen-landing").style.display = "flex";
+    }
+
+    function showLandingTab(tabName, event) {
+      if (event) event.preventDefault();
+      document.getElementById("landing-home-tab").style.display = "none";
+      document.getElementById("landing-about-tab").style.display = "none";
+      document.getElementById("landing-contact-tab").style.display = "none";
+
+      document.getElementById(`landing-${tabName}-tab`).style.display = "block";
+    }
+
     // Graceful fallback if eel.js is not present when previewing standalone in browser
     window.eel = window.eel || {
       expose: function() {},
