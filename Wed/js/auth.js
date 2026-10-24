@@ -35,6 +35,9 @@ document.addEventListener("DOMContentLoaded", () => {
   const btnLock = document.getElementById("btnLockVault");
   if (btnLock) btnLock.addEventListener("click", lockVault);
 
+  const btnLogout = document.getElementById("btnLogout");
+  if (btnLogout) btnLogout.addEventListener("click", handleLogout);
+
   // Sidebar Navigation
   document.querySelectorAll(".sidebar .nav-item").forEach(btn => {
     btn.addEventListener("click", () => {
@@ -89,6 +92,10 @@ function goTo2FAScreen() {
   }
 
   activeUser = { name, email, phone, pin };
+  
+  // Store session password for lock/unlock continuity
+  sessionStorage.setItem("vault_pass", pin);
+
   generatedOtp = Math.floor(100000 + Math.random() * 900000).toString();
 
   document.getElementById("otpPromptText").textContent = `A 6-digit verification code has been dispatched to ${phone || email}.`;
@@ -140,6 +147,17 @@ function lockVault() {
   document.getElementById("screen-2fa").style.display = "none";
   document.getElementById("screen-login").style.display = "flex";
   showToast("Vault session locked.", "🔒");
+}
+
+function handleLogout() {
+  sessionStorage.removeItem("vault_pass");
+  activeUser = { name: "", email: "", phone: "", pin: "" };
+  document.getElementById("screen-home").style.display = "none";
+  document.getElementById("screen-2fa").style.display = "none";
+  document.getElementById("screen-login").style.display = "flex";
+  const pinInput = document.getElementById("inputPin");
+  if (pinInput) pinInput.value = "";
+  showToast("Logged out successfully. Session cleared.", "🔒");
 }
 
 // NAVIGATION
