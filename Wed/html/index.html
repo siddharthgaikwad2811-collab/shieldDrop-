@@ -113,12 +113,19 @@
   <div id="screen-login" class="fullscreen-view" style="display: none;">
     <div class="auth-box">
       <div class="auth-header">
-        <span class="auth-tag">Access Gateway</span>
-        <h2>ShieldDrop Access</h2>
-        <p>Register your session identity to begin verification.</p>
+        <span class="auth-tag" id="authModeTag">Access Gateway</span>
+        <h2 id="authTitle">ShieldDrop Access</h2>
+        <p id="authSubtitle">Register your session identity or log in to your vault.</p>
       </div>
 
-      <div class="form-group">
+      <!-- Mode Switcher Tabs -->
+      <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+        <button type="button" id="tabRegisterBtn" onclick="switchAuthMode('register')" class="btn-secondary" style="flex: 1; border-color: var(--border-active);">Register</button>
+        <button type="button" id="tabLoginBtn" onclick="switchAuthMode('login')" class="btn-secondary" style="flex: 1;">Login</button>
+      </div>
+
+      <!-- Full Name (Only needed for Registration) -->
+      <div class="form-group" id="groupName">
         <label>Full Name</label>
         <input type="text" id="inputName" placeholder="e.g. Siddharth Gaikwad" autocomplete="off" />
       </div>
@@ -128,20 +135,23 @@
         <input type="email" id="inputEmail" placeholder="siddharth@example.com" autocomplete="off" />
       </div>
 
-      <div class="form-group">
+      <!-- Phone Number (Only needed for Registration) -->
+      <div class="form-group" id="groupPhone">
         <label>Phone Number</label>
         <input type="tel" id="inputPhone" placeholder="+91 98765 43210" autocomplete="off" />
       </div>
 
+      <!-- Vault Password -->
       <div class="form-group">
-        <label>Vault Quick PIN</label>
+        <label id="passwordLabel">Vault Password</label>
         <div class="input-with-action">
-          <input type="password" id="inputPin" placeholder="4-digit PIN" maxlength="6" autocomplete="off" />
-          <button type="button" id="togglePinBtn" class="btn-toggle-eye">👁️</button>
+          <input type="password" id="inputPassword" placeholder="Enter secure password" autocomplete="off" />
+          <button type="button" id="togglePasswordBtn" class="btn-toggle-eye">👁️</button>
         </div>
       </div>
 
-      <button type="button" id="btnProceedLogin" class="btn-primary">Proceed to 2FA Verification →</button>
+      <!-- Dynamic Action Button -->
+      <button type="button" id="btnAuthSubmit" class="btn-primary" onclick="handleAuthSubmit()">Register Account →</button>
       <button type="button" onclick="backToLanding()" class="btn-secondary">← Back to Landing Page</button>
     </div>
   </div>
@@ -360,6 +370,8 @@
 
   <!-- Landing & Navigation Helper Scripts -->
   <script type="text/javascript">
+    let currentAuthMode = 'register';
+
     function goToAuthScreen() {
       document.getElementById("screen-landing").style.display = "none";
       document.getElementById("screen-login").style.display = "flex";
@@ -373,15 +385,12 @@
     function showLandingTab(tabName, event) {
       if (event) event.preventDefault();
       
-      // Hide all tabs
       document.getElementById("landing-home-tab").style.display = "none";
       document.getElementById("landing-about-tab").style.display = "none";
       document.getElementById("landing-contact-tab").style.display = "none";
 
-      // Show target tab
       document.getElementById(`landing-${tabName}-tab`).style.display = "block";
 
-      // Update navbar link active states
       const links = document.querySelectorAll(".nav-links a");
       links.forEach(link => {
         link.style.color = "var(--text-muted)";
@@ -392,6 +401,97 @@
         event.target.style.fontWeight = "600";
       }
     }
+
+    function switchAuthMode(mode) {
+      currentAuthMode = mode;
+      const regBtn = document.getElementById("tabRegisterBtn");
+      const logBtn = document.getElementById("tabLoginBtn");
+      const groupName = document.getElementById("groupName");
+      const groupPhone = document.getElementById("groupPhone");
+      const authTitle = document.getElementById("authTitle");
+      const authSubtitle = document.getElementById("authSubtitle");
+      const btnAuthSubmit = document.getElementById("btnAuthSubmit");
+
+      if (mode === 'register') {
+        regBtn.style.borderColor = "var(--border-active)";
+        logBtn.style.borderColor = "var(--border-color)";
+        groupName.style.display = "block";
+        groupPhone.style.display = "block";
+        authTitle.innerText = "ShieldDrop Access";
+        authSubtitle.innerText = "Register your session identity to begin.";
+        btnAuthSubmit.innerText = "Register Account →";
+      } else {
+        logBtn.style.borderColor = "var(--border-active)";
+        regBtn.style.borderColor = "var(--border-color)";
+        groupName.style.display = "none";
+        groupPhone.style.display = "none";
+        authTitle.innerText = "ShieldDrop Login";
+        authSubtitle.innerText = "Enter your credentials to access your vault.";
+        btnAuthSubmit.innerText = "Login to Vault →";
+      }
+    }
+
+    async function handleAuthSubmit() {
+      const email = document.getElementById("inputEmail").value.trim();
+      const password = document.getElementById("inputPassword").value.trim();
+
+      if (!email || !password) {
+        alert("Please fill in all required fields.");
+        return;
+      }
+
+      try {
+        if (currentAuthMode === 'register') {
+          const name = document.getElementById("inputName").value.trim();
+          const phone = document.getElementById("inputPhone").value.trim();
+
+          if (!name || !phone) {
+            alert("Name and Phone are required for registration.");
+            return;
+          }
+
+          const response = await eel.register_user_bridge(name, email, phone, password)();
+          if (response && response.status === "success") {
+            alert("Account registered successfully! You can now log in.");
+            switchAuthMode('login');
+          } else {
+            alert("Registration error: " + (response ? response.message : "Unknown error"));
+          }
+        } else {
+          const response = await eel.login_user_bridge(email, password)();
+          if (response && response.status === "success") {
+            // Populate workspace with user data
+            const user = response.user;
+            document.getElementById("navUserName").innerText = user.name;
+            document.getElementById("settingsUserDisplay").innerText = user.name;
+            document.getElementById("settingsEmailDisplay").innerText = user.email;
+            document.getElementById("settingsPhoneDisplay").innerText = user.phone;
+
+            // Transition to main home workspace
+            document.getElementById("screen-login").style.display = "none";
+            document.getElementById("screen-home").style.display = "flex";
+          } else {
+            alert("Login failed: " + (response ? response.message : "Invalid credentials"));
+          }
+        }
+      } catch (err) {
+        console.error("Auth bridge error:", err);
+        alert("Could not connect to the backend server.");
+      }
+    }
+
+    // Lock Vault handler
+    document.addEventListener("DOMContentLoaded", () => {
+      const btnLockVault = document.getElementById("btnLockVault");
+      if (btnLockVault) {
+        btnLockVault.addEventListener("click", () => {
+          document.getElementById("screen-home").style.display = "none";
+          document.getElementById("screen-login").style.display = "flex";
+          document.getElementById("inputPassword").value = "";
+          switchAuthMode('login');
+        });
+      }
+    });
 
     async function handleContactSubmit(event) {
       event.preventDefault();
