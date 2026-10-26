@@ -393,11 +393,25 @@
       }
     }
 
-    function handleContactSubmit(event) {
+    async function handleContactSubmit(event) {
       event.preventDefault();
-      const name = document.getElementById("contactName").value;
-      alert(`Thank you, ${name}! Your message has been sent to ShieldDrop support.`);
-      document.getElementById("contactForm").reset();
+      const name = document.getElementById("contactName").value.trim();
+      const email = document.getElementById("contactEmail").value.trim();
+      const message = document.getElementById("contactMsg").value.trim();
+
+      try {
+        const response = await eel.save_contact_message(name, email, message)();
+
+        if (response && response.status === "success") {
+          alert(`Thank you, ${name}! Your message has been saved to the database.`);
+          document.getElementById("contactForm").reset();
+        } else {
+          alert("Error saving message: " + (response ? response.message : "Unknown error"));
+        }
+      } catch (err) {
+        console.error("Backend bridge error:", err);
+        alert("Could not connect to the Python backend.");
+      }
     }
 
     window.eel = window.eel || {
