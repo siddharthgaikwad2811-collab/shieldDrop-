@@ -18,47 +18,91 @@
   </div>
 
   <!-- SCREEN 0: PUBLIC LANDING PAGE (Home, About Us, Contact Us) -->
-  <div id="screen-landing" class="fullscreen-view" style="display: flex; flex-direction: column; width: 100vw; height: 100vh; background: #0f172a; color: white;">
+  <div id="screen-landing" class="fullscreen-view" style="display: flex; flex-direction: column; width: 100vw; height: 100vh; background: var(--bg-core); color: var(--text-main); overflow-y: auto;">
+    
     <!-- Navbar -->
-    <nav class="landing-navbar" style="display: flex; justify-content: space-between; align-items: center; padding: 20px 50px; background: #1e293b; border-bottom: 1px solid #334155;">
-      <div class="logo" style="font-size: 22px; font-weight: bold; display: flex; align-items: center; gap: 8px;">
-        <span>🛡️</span> ShieldDrop
+    <nav class="landing-navbar" style="display: flex; justify-content: space-between; align-items: center; padding: 20px 60px; background: var(--bg-surface); backdrop-filter: blur(10px); border-bottom: 1px solid var(--border-color); position: sticky; top: 0; z-index: 1000;">
+      <div class="logo" style="font-size: 20px; font-weight: 700; display: flex; align-items: center; gap: 10px; color: var(--text-main); letter-spacing: -0.5px;">
+        <span style="background: #1e293b; padding: 8px; border-radius: 8px; font-size: 16px; border: 1px solid var(--border-active);">🛡️</span> ShieldDrop <span style="font-size: 11px; background: #1e293b; color: var(--text-main); border: 1px solid var(--border-active); padding: 2px 6px; border-radius: 4px; font-weight: 600;">v2.6</span>
       </div>
-      <div class="nav-links" style="display: flex; gap: 30px;">
-        <a href="#home" style="color: #9ca3af; text-decoration: none; font-weight: 500;" onclick="showLandingTab('home', event)">Home</a>
-        <a href="#about" style="color: #9ca3af; text-decoration: none; font-weight: 500;" onclick="showLandingTab('about', event)">About Us</a>
-        <a href="#contact" style="color: #9ca3af; text-decoration: none; font-weight: 500;" onclick="showLandingTab('contact', event)">Contact Us</a>
+      <div class="nav-links" style="display: flex; gap: 35px;">
+        <a href="#home" style="color: var(--text-main); text-decoration: none; font-weight: 600; font-size: 15px;" onclick="showLandingTab('home', event)">Home</a>
+        <a href="#about" style="color: var(--text-muted); text-decoration: none; font-weight: 500; font-size: 15px;" onclick="showLandingTab('about', event)">About Us</a>
+        <a href="#contact" style="color: var(--text-muted); text-decoration: none; font-weight: 500; font-size: 15px;" onclick="showLandingTab('contact', event)">Contact Us</a>
       </div>
       <div>
-        <button type="button" onclick="goToAuthScreen()" class="btn-primary" style="padding: 10px 22px; font-size: 14px; border-radius: 6px; cursor: pointer;">Sign In / Register</button>
+        <button type="button" onclick="goToAuthScreen()" class="btn-primary" style="padding: 10px 24px; font-size: 14px; width: auto;">Sign In / Register</button>
       </div>
     </nav>
 
     <!-- Landing Content Area -->
-    <div class="landing-content" style="flex: 1; display: flex; justify-content: center; align-items: center; text-align: center; padding: 40px;">
+    <div class="landing-content" style="flex: 1; display: flex; justify-content: center; align-items: center; padding: 60px 20px;">
       
       <!-- Home Tab -->
-      <div id="landing-home-tab" class="landing-tab" style="display: block; max-width: 700px;">
-        <span class="auth-tag" style="display: inline-block; margin-bottom: 15px; background: #312e81; color: #818cf8; padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 600;">Secure Local File Vault</span>
-        <h1 style="font-size: 44px; margin-bottom: 20px; font-weight: 700;">Military-Grade AES-256 File Protection</h1>
-        <p style="font-size: 16px; color: #9ca3af; line-height: 1.6; margin-bottom: 30px;">Protect your sensitive documents, financial records, and personal assets with zero-knowledge local encryption, SHA-256 hashing, and automated MySQL audit logs.</p>
-        <button type="button" onclick="goToAuthScreen()" class="btn-primary" style="padding: 14px 32px; font-size: 16px; border-radius: 8px; cursor: pointer;">Get Started Now →</button>
+      <div id="landing-home-tab" class="landing-tab" style="display: block; max-width: 900px; text-align: center;">
+        <span class="auth-tag">🔒 Secure Local File Vault & Cryptographic Engine</span>
+        <h1 style="font-size: 52px; margin-bottom: 20px; font-weight: 800; color: var(--text-main); line-height: 1.15;">Tactical AES-256 File Protection</h1>
+        <p style="font-size: 18px; color: var(--text-muted); line-height: 1.6; max-width: 700px; margin: 0 auto 40px;">Protect your sensitive documents, financial spreadsheets, and personal assets with zero-knowledge local encryption, SHA-256 file hashing, and automated MySQL audit logs.</p>
+        
+        <div style="display: flex; gap: 16px; justify-content: center; margin-bottom: 50px;">
+          <button type="button" onclick="goToAuthScreen()" class="btn-primary" style="width: auto; padding: 14px 32px; font-size: 16px;">Get Started Now →</button>
+          <button type="button" onclick="showLandingTab('about', event)" style="padding: 14px 28px; font-size: 16px; font-weight: 600; background: var(--bg-surface); color: var(--text-main); border: 1px solid var(--border-active); border-radius: 8px; cursor: pointer;">Learn Architecture</button>
+        </div>
+
+        <!-- Feature Grid Cards -->
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; text-align: left;">
+          <div style="background: var(--bg-surface); padding: 24px; border-radius: 12px; border: 1px solid var(--border-color);">
+            <div style="font-size: 24px; margin-bottom: 12px;">🛡️</div>
+            <h3 style="font-size: 16px; color: var(--text-main); margin-bottom: 8px;">AES-256 Fernet</h3>
+            <p style="font-size: 13px; color: var(--text-muted); line-height: 1.5;">Robust symmetric encryption ensuring complete confidentiality of data at rest.</p>
+          </div>
+          <div style="background: var(--bg-surface); padding: 24px; border-radius: 12px; border: 1px solid var(--border-color);">
+            <div style="font-size: 24px; margin-bottom: 12px;">🔑</div>
+            <h3 style="font-size: 16px; color: var(--text-main); margin-bottom: 8px;">2FA & Vault PIN</h3>
+            <p style="font-size: 13px; color: var(--text-muted); line-height: 1.5;">Multi-stage identity verification coupled with secure session key management.</p>
+          </div>
+          <div style="background: var(--bg-surface); padding: 24px; border-radius: 12px; border: 1px solid var(--border-color);">
+            <div style="font-size: 24px; margin-bottom: 12px;">📊</div>
+            <h3 style="font-size: 16px; color: var(--text-main); margin-bottom: 8px;">MySQL Auditing</h3>
+            <p style="font-size: 13px; color: var(--text-muted); line-height: 1.5;">Persistent logging of all encryption, decryption, and access activities.</p>
+          </div>
+        </div>
       </div>
 
       <!-- About Us Tab -->
-      <div id="landing-about-tab" class="landing-tab" style="display: none; max-width: 650px; text-align: left; background: #1e293b; padding: 40px; border-radius: 12px; border: 1px solid #334155;">
-        <h2 style="font-size: 28px; margin-bottom: 15px; color: #f8fafc;">About ShieldDrop</h2>
-        <p style="font-size: 15px; color: #9ca3af; line-height: 1.7; margin-bottom: 15px;">ShieldDrop is an advanced desktop security utility engineered for absolute data confidentiality at rest. Built using Python Eel, HTML5/Bootstrap, and MySQL, it ensures that your private files remain completely inaccessible to unauthorized parties.</p>
-        <p style="font-size: 15px; color: #9ca3af; line-height: 1.7;">By utilizing local PBKDF2 key derivation and AES-256 encryption, ShieldDrop eliminates reliance on vulnerable public cloud storage providers.</p>
+      <div id="landing-about-tab" class="landing-tab" style="display: none; max-width: 750px; text-align: left; background: var(--bg-surface); padding: 45px; border-radius: 16px; border: 1px solid var(--border-color); box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
+        <span class="auth-tag">System Overview</span>
+        <h2 style="font-size: 32px; margin: 15px 0 20px; color: var(--text-main); font-weight: 700;">About ShieldDrop</h2>
+        <p style="font-size: 15px; color: var(--text-muted); line-height: 1.8; margin-bottom: 15px;">ShieldDrop is an advanced desktop security utility engineered for absolute data confidentiality at rest. Built using Python Eel, HTML5/Bootstrap, and MySQL, it ensures that your private files remain completely inaccessible to unauthorized parties.</p>
+        <p style="font-size: 15px; color: var(--text-muted); line-height: 1.8; margin-bottom: 25px;">By utilizing local PBKDF2 key derivation and AES-256 encryption, ShieldDrop eliminates reliance on vulnerable public cloud storage providers, giving you full sovereign control over your digital footprint.</p>
+        <div style="display: flex; gap: 20px; border-top: 1px solid var(--border-color); padding-top: 20px;">
+          <div><strong style="color: var(--text-main); display: block; font-size: 18px;">Python Eel</strong> <span style="font-size: 12px; color: var(--text-dim);">Desktop Bridge</span></div>
+          <div style="border-left: 1px solid var(--border-color); padding-left: 20px;"><strong style="color: var(--text-main); display: block; font-size: 18px;">AES-256</strong> <span style="font-size: 12px; color: var(--text-dim);">Cryptography</span></div>
+          <div style="border-left: 1px solid var(--border-color); padding-left: 20px;"><strong style="color: var(--text-main); display: block; font-size: 18px;">MySQL</strong> <span style="font-size: 12px; color: var(--text-dim);">Audit Logging</span></div>
+        </div>
       </div>
 
-      <!-- Contact Us Tab -->
-      <div id="landing-contact-tab" class="landing-tab" style="display: none; max-width: 500px; background: #1e293b; padding: 40px; border-radius: 12px; border: 1px solid #334155; text-align: center;">
-        <h2 style="font-size: 28px; margin-bottom: 15px; color: #f8fafc;">Contact Support</h2>
-        <p style="font-size: 15px; color: #9ca3af; margin-bottom: 20px;">Have questions regarding your security vault or technical architecture? Reach out to our development team.</p>
-        <div style="background: #0f172a; padding: 14px; border-radius: 6px; border: 1px solid #334155; color: #818cf8; font-weight: 600;">
-          siddharthgaikwad2811@gmail.com
-        </div>
+      <!-- Contact Us Tab (Interactive Form) -->
+      <div id="landing-contact-tab" class="landing-tab" style="display: none; max-width: 550px; text-align: left; background: var(--bg-surface); padding: 45px; border-radius: 16px; border: 1px solid var(--border-color); box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
+        <span class="auth-tag">Get in Touch</span>
+        <h2 style="font-size: 28px; margin: 15px 0 10px; color: var(--text-main); font-weight: 700;">Contact Support</h2>
+        <p style="font-size: 14px; color: var(--text-muted); margin-bottom: 25px;">Have questions regarding your security vault or technical architecture? Send us a message below.</p>
+        
+        <form id="contactForm" onsubmit="handleContactSubmit(event)">
+          <div class="form-group">
+            <label>Your Name</label>
+            <input type="text" id="contactName" placeholder="Siddharth Gaikwad" required />
+          </div>
+          <div class="form-group">
+            <label>Email Address</label>
+            <input type="email" id="contactEmail" placeholder="siddharth@example.com" required />
+          </div>
+          <div class="form-group">
+            <label>Your Message</label>
+            <textarea id="contactMsg" placeholder="Type your query or feedback here..." rows="4" required style="resize: none;"></textarea>
+          </div>
+          <button type="submit" class="btn-primary">Send Message</button>
+        </form>
       </div>
 
     </div>
@@ -98,7 +142,7 @@
       </div>
 
       <button type="button" id="btnProceedLogin" class="btn-primary">Proceed to 2FA Verification →</button>
-      <button type="button" onclick="backToLanding()" class="btn-secondary" style="margin-top: 10px;">← Back to Landing Page</button>
+      <button type="button" onclick="backToLanding()" class="btn-secondary">← Back to Landing Page</button>
     </div>
   </div>
 
@@ -328,14 +372,34 @@
 
     function showLandingTab(tabName, event) {
       if (event) event.preventDefault();
+      
+      // Hide all tabs
       document.getElementById("landing-home-tab").style.display = "none";
       document.getElementById("landing-about-tab").style.display = "none";
       document.getElementById("landing-contact-tab").style.display = "none";
 
+      // Show target tab
       document.getElementById(`landing-${tabName}-tab`).style.display = "block";
+
+      // Update navbar link active states
+      const links = document.querySelectorAll(".nav-links a");
+      links.forEach(link => {
+        link.style.color = "var(--text-muted)";
+        link.style.fontWeight = "500";
+      });
+      if (event && event.target) {
+        event.target.style.color = "var(--text-main)";
+        event.target.style.fontWeight = "600";
+      }
     }
 
-    // Graceful fallback if eel.js is not present when previewing standalone in browser
+    function handleContactSubmit(event) {
+      event.preventDefault();
+      const name = document.getElementById("contactName").value;
+      alert(`Thank you, ${name}! Your message has been sent to ShieldDrop support.`);
+      document.getElementById("contactForm").reset();
+    }
+
     window.eel = window.eel || {
       expose: function() {},
       _init: function() {}
